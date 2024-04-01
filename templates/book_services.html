@@ -1,0 +1,861 @@
+{% comment %} {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book service</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="icon" href="{% static 'images/eventoplanneur.png' %}" type="image/x-icon">
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+</head>
+<style>
+  
+  .rating {
+    display: inline-block;
+  }
+  
+  .rating input {
+    display: none;
+  }
+  
+  .rating label {
+    float: right;
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.3s;
+  }
+  
+  .rating label:before {
+    content: '\2605';
+    font-size: 30px;
+  }
+  
+  .rating input:checked ~ label,
+  .rating label:hover,
+  .rating label:hover ~ label {
+    color: #6f00ff;
+    transition: color 0.3s;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa; /* Set a light background color */
+    color: #495057; /* Set text color */
+  }
+  a{
+    color:white;
+    text-decoration:none;
+  }
+  /* Style for the container */
+  .container {
+    margin-top: 30px;
+  }
+
+  /* Style for the form */
+  #service {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Style for form labels */
+  .form-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #495057;
+  }
+
+  /* Style for form inputs */
+  .form-control {
+    width: 100%;
+    height:auto;
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .form-control:focus {
+    border-color: #6c757d;
+    box-shadow: 0 0 8px rgba(108, 117, 125, 0.5);
+  }
+
+  /* Style for buttons */
+  button {
+    padding: 12px 20px;
+    margin-right: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  button:hover {
+    background-color: #6c757d;
+    color: white;
+    box-shadow: 0 0 10px rgba(108, 117, 125, 0.5);
+  }
+
+  /* Style for error text */
+  .error-text {
+    color: #ff6347; /* Tomato color */
+  }
+
+  /* Style for the preview image */
+  #preview {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-top: 10px;
+  }
+
+  /* Style for the selected locations textarea */
+  #location ,#services_provided,#description,#capacity,#participants,#budget{
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #6c757d;
+    border-radius: 8px;
+    margin-top: 15px;
+    box-sizing: border-box;
+    font-size: 14px;
+  }
+  #locations {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #6c757d;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #495057;
+    font-size: 14px;
+    margin-top: 15px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  #locations option {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  #locations:focus {
+    border-color: #6c757d;
+    box-shadow: 0 0 8px rgba(108, 117, 125, 0.5);
+  }
+
+  /* Additional styles for the navbar */
+  .navbar {
+    background-color: #495057;
+    color: #fff;
+  }
+
+  .navbar-brand {
+    font-weight: bold;
+    color: #fff !important;
+  }
+
+  .navbar-toggler-icon {
+    background-color: #fff;
+  }
+
+  /* Style for the events container */
+  .events {
+    background-color: rgba(108, 117, 125, 0.2);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    color: #495057;
+  }
+
+  /* Style for the footer */
+  span {
+    color: #ff6347; /* Tomato color */
+  }
+  /* Style for the services input container */
+  .services-input-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  #data-input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #6c757d;
+    border-radius: 8px 0 0 8px;
+    margin-right: 5px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  #add-button {
+    width: 40px;
+    padding: 12px;
+    background-color: #6c757d;
+    color: #fff;
+    border: 1px solid #6c757d;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  #add-button:hover {
+    background-color: #495057;
+  }
+
+  /* Additional styles for the navbar */
+  .navbar {
+    background-color: #495057;
+    color: #fff;
+  }
+
+  .navbar-brand {
+    font-weight: bold;
+    color: #fff !important;
+  }
+
+  .navbar-toggler-icon {
+    background-color: #fff;
+  }
+
+  /* Style for the events container */
+  .events {
+    background-color: rgba(108, 117, 125, 0.2);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    color: #495057;
+  }
+
+  /* Style for the footer */
+  span {
+    color: #ff6347; /* Tomato color */
+  }
+  #service {
+    background-color: #f2f9fc; /* Light blue background */
+  }
+
+  button {
+    background-color: #007bff; /* Blue button background */
+    color: white;
+  }
+
+  #add-button {
+    background-color: #0056b3; /* Darker blue for add button */
+    border: 1px solid #0056b3;
+  }
+
+  #add-button:hover {
+    background-color: #004080; /* Darker blue on hover */
+  }
+
+  /* Update background color for the locations dropdown */
+  #locations {
+    background-color: #fff; /* White background for dropdown */
+    color: #495057;
+  }
+
+  #locations:focus {
+    border-color: #6c757d;
+    box-shadow: 0 0 8px rgba(108, 117, 125, 0.5);
+  }
+
+  /* Additional styles for the navbar */
+  .navbar {
+    background-color: #004080; /* Darker blue navbar */
+    color: #fff;
+  }
+
+  .navbar-brand {
+    font-weight: bold;
+    color: #fff !important;
+  }
+
+  .navbar-toggler-icon {
+    background-color: #fff;
+  }
+
+  /* Style for the events container */
+  .events {
+    background-color: rgba(108, 117, 125, 0.2);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    color: #495057;
+  }
+
+  /* Style for the footer */
+  span {
+    color: #ff6347; /* Tomato color */
+  }
+</style>
+
+
+<body>
+  <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+    <div class="container">
+      <a class="navbar-brand" href="{% url 'eventapp:providerhome' %}">
+        <img src="{% static 'images/Eventoplanneur.png' %}" alt="Logo" width="50"> EventoPlanneur
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+    </div>
+  </nav>
+  <div class="container">
+    <div class="events">
+        <h4>Book Service</h4>
+        {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+        <form method="post" id="service" enctype="multipart/form-data" action="{% url 'book_services' service_id %}">
+          {% csrf_token %}
+          <table>
+          <tr>
+            <td>
+              <div class="mb-3">
+              <label for="name" class="form-label">Name<span>*</span> :</label>
+              <input type="text" id="name" name="name" class="form-control" value="{{service_form.name.value}}" readonly>
+              <span id="nameError" class="error-text"></span>
+              </div>
+            </td>
+            <td>
+          <div class="mb-3">
+          <label for="date" class="form-label">Date<span>*</span> :</label>
+          <input type="date" id="date" name="date" class="form-control" >
+          <span id="Error" class="error-text"></span>
+      </div>
+    </td>
+        </tr><tr>
+          <td>
+            <div class="mb-3">
+              <label for="location" class="form-label">Location<span>*</span> :</label><br>
+              <select id="location" name="location">
+                  {% for l in location_values %}
+                      <option value="{{ l }}">{{ l }}</option>
+                  {% endfor %}
+              </select>
+              <span id="locationsError" class="error-text"></span>
+          </div>
+          
+        </td>
+        <td>
+          <div class="mb-3">
+              <label for="capacity" class="form-label">Number of participants<span>*</span> :</label><br>
+              <input type="text" id="capacity" name="capacity"  value="{{service_form.capacity.value}}" hidden>
+              <input type="number" id="participants" name="participants" >
+              <span id="capacityError" class="error-text"></span>
+          </div>
+      </td>
+      <script>
+        $(document).ready(function() {
+            $("#participants").on("input", function() {
+                // Get the values of capacity and participants
+                var capacity = parseInt($("#capacity").val());
+                var participants = parseInt($("#participants").val());
+        
+                // Check if the number of participants exceeds the capacity
+                if (!isNaN(capacity) && !isNaN(participants) && participants > capacity) {
+                    $("#capacityError").text("Capacity exceeded. ");
+                } else {
+                    $("#capacityError").text("");
+                }
+            });
+        });
+        </script>
+  </tr>
+  <tr>
+
+    <td>
+      <div class="mb-3 services-container">
+          <label for="services_required" class="form-label">Services Required<span>*</span> :</label><br>
+          <!-- Your existing HTML for the select element -->
+<select id="services_required" name="services_required" multiple style="width:100%;">
+  {% for service in services_required %}
+      <option value="{{ service }}">{{ service }}</option>
+  {% endfor %}
+</select>
+
+<!-- Display selected services -->
+<!-- Display selected services -->
+<!-- Display selected services -->
+<div id="selectedServices" >
+  {% if service_form.services_required.value %}
+    Selected Services: 
+    {% for selected_service in service_form.services_required.value %}
+        {{ selected_service }}
+        {% if not forloop.last %}, {% endif %}
+    {% endfor %}
+  {% else %}
+    <!-- Display nothing if no services are selected initially -->
+  {% endif %}
+</div>
+
+<!-- Add this script for AJAX -->
+<script>
+$(document).ready(function() {
+    function updateSelectedServices() {
+        // Get the selected values from the select element
+        var selectedServices = $("#services_required").val();
+
+        // Update the selected services display
+        var displayText = selectedServices ? "Selected Services: " + selectedServices.join(", ") : "";
+        $("#selectedServices").text(displayText);
+    }
+
+    // Initialize the selected services display
+    updateSelectedServices();
+
+    // Listen for changes in the select element
+    $("#services_required").change(function() {
+        updateSelectedServices();
+    });
+});
+</script>
+
+        <span id="nameError" style="color: red;"></span>
+      </div>
+  </td>
+  <!-- Add this script for AJAX -->
+  <!-- Add this script tag to include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<td>
+  <div class="mb-3">
+      <label for="budget" class="form-label">Maximum Budget<span>*</span> :</label><br>
+      <input type="number" id="budget" name="budget" >
+      <span id="budgetError" class="error-text"></span>
+  </div>
+</td>
+            </tr><tr><td>
+              <span>* Required fields</span><br>
+          
+            </td><td>
+              <button><a style="text-decoration:none;color:white;" href="{% url 'eventapp:services' %}" class="btn2"> Back </a></button>
+              <button id="sendButton" type="submit">Send Request
+        </button>
+            </td></tr></form>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      
+      
+    
+<script src="{% static 'js/services.js' %}"></script>
+      
+    </div>
+    
+</div>
+</body>
+</html> {% endcomment %}
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View service</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="icon" href="{% static 'images/eventoplanneur.png' %}" type="image/x-icon">
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #f8f9fa; /* Set a light background color */
+      color: #495057; /* Set text color */
+    }
+
+    .navbar {
+      background-color: #495057;
+      color: #fff;
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+      color: #fff !important;
+    }
+
+    .navbar-toggler-icon {
+      background-color: #fff;
+    }
+
+    .container {
+      margin-top: 30px;
+    }
+
+    .card {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      background-color: #004080;
+      color: white;
+      border-radius: 10px 10px 0 0;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .form-label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #495057;
+    }
+
+    .form-control {
+      width: 100%;
+      height: auto;
+      padding: 12px;
+      border: 1px solid #ced4da;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: #6c757d;
+      box-shadow: 0 0 8px rgba(108, 117, 125, 0.5);
+    }
+
+    button {
+      padding: 12px 20px;
+      margin-right: 10px;
+      cursor: pointer;
+      background-color:#004080;
+      border: none;
+      border-radius: 8px;
+      transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    }
+    #location ,#services_required,#description,#capacity,#participants,#budget{
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #6c757d;
+      border-radius: 8px;
+      margin-top: 15px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    #description{
+      height: 100%;
+    }
+    button:hover {
+      background-color: #6c757d;
+      color: white;
+      box-shadow: 0 0 10px rgba(108, 117, 125, 0.5);
+    }
+
+    .error-text {
+      color: #ff6347; /* Tomato color */
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+    <div class="container">
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <a class="navbar-brand" href="{% url 'eventapp:orghome' %}">
+            <img src="{% static 'images/Eventoplanneur.png' %}" alt="Logo" width="50"> EventoPlanneur
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item"><a class="nav-link" href="{% url 'eventapp:bookings' %}">Bookings</a></li>
+            <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'eventapp:gallery' %}">Gallery</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'eventapp:review_service' %}">Reviews & Ratings</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'eventapp:org_profile' %}">Profile</a></li>
+            <li class="nav-item"><a class="nav-link" href="#notifications">Notifications</a></li>
+            <li class="nav-item">
+                {% if user.is_authenticated %}
+                <a class="nav-link" >User: {{ user.email }}</a>
+                <li class="nav-item"><a href="{% url 'eventapp:logout' %}" class="nav-link">Logout</a></li>
+                {% endif %}
+            </li>
+        </ul>
+    </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h4>Details of Service</h4>
+      </div>
+      <div class="card-body">
+        {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+        <!-- Your form content here -->
+        <form method="post" id="service" enctype="multipart/form-data" action="{% url 'book_services' service_id %}">
+          {% csrf_token %}
+          
+              <div class="mb-3">
+              <label for="name" class="form-label">Name<span>*</span> :</label>
+              <input type="text" id="name" name="name" class="form-control" value="{{service_form.name.value}}" readonly>
+              <input type="text" id="service_id" name="service_id" class="form-control" value="{{ service_form.instance.id }}" hidden>
+              <span id="nameError" class="error-text"></span>
+              </div>
+              <div class="mb-3">
+                <label for="date" class="form-label">Date<span>*</span> :</label>
+                <input type="date" id="date" name="date" class="form-control">
+                <span id="dateError" class="error-text"></span>
+            </div>
+            
+            <script>
+                /*function checkAvailability() {
+                    var selectedDate = document.getElementById('date').value;
+                    var selectedLocation = document.getElementById('location').value;  // Replace 'location' with the actual id of your location input field
+                    var service_id = document.getElementById('service_id').value;
+            
+                    // Check if the selected date is less than today
+                    var today = new Date();
+                    var selectedDateTime = new Date(selectedDate + 'T00:00:00');
+                    
+                    if (selectedDateTime < today) {
+                        document.getElementById('dateError').innerHTML = 'Please select a future date';
+                        return;
+                    } else {
+                        document.getElementById('dateError').innerHTML = '';
+                    }
+            
+                    // AJAX request to check availability
+                    $.ajax({
+                        type: 'POST',
+                        url: '/check_availability/',
+                        data: {
+                            'service_id': service_id,
+                            'date': selectedDate,
+                            'location': selectedLocation,
+                            'csrfmiddlewaretoken': '{{ csrf_token }}'
+                        },
+                        success: function(response) {
+                            if (response.available) {
+                                document.getElementById('dateError').innerHTML = '';  // Clear previous error message
+                            } else {
+                                document.getElementById('dateError').innerHTML = 'Bookings full on this date';
+                            }
+                        },
+                        error: function(error) {
+                            console.log(error);
+                        }
+                    });
+                } */
+                $(document).ready(function() {
+                  $("#date").on("input", function() {
+                      var selectedDate = document.getElementById('date').value;
+                      var selectedLocation = document.getElementById('location').value;
+                      var service_id = document.getElementById('service_id').value;
+              
+                      // Check if the selected date is less than today
+                      var today = new Date();
+                      var selectedDateTime = new Date(selectedDate + 'T00:00:00');
+              
+                      if (selectedDateTime < today) {
+                          document.getElementById('dateError').innerHTML = 'Please select a future date';
+                          return;
+                      } else {
+                          document.getElementById('dateError').innerHTML = '';
+                      }
+              
+                      // AJAX request to check availability and number of participants
+                      $.ajax({
+                          type: 'POST',
+                          url: '/check_availability/',
+                          data: {
+                              'service_id': service_id,
+                              'date': selectedDate,
+                              'location': selectedLocation,
+                              'csrfmiddlewaretoken': '{{ csrf_token }}'
+                          },
+                          success: function(response) {
+                              if (response.available && response.participants < 500) {
+                                  document.getElementById('dateError').innerHTML = '';  // Clear previous error message
+                              } else {
+                                  if (!response.available) {
+                                      document.getElementById('dateError').innerHTML = 'Bookings full on this date';
+                                  } else {
+                                      document.getElementById('dateError').innerHTML = 'Number of participants exceeds limit';
+                                  }
+                              }
+                          },
+                          error: function(error) {
+                              console.log(error);
+                          }
+                      });
+                  });
+              });
+              
+            </script>
+            
+        
+            <div class="mb-3">
+              <label for="location" class="form-label">Location<span>*</span> :</label><br>
+              <select id="location" name="location">
+                  {% for l in location_values %}
+                      <option value="{{ l }}">{{ l }}</option>
+                  {% endfor %}
+              </select>
+              <span id="locationsError" class="error-text"></span>
+          </div>
+          <div class="mb-3">
+            <label for="capacity" class="form-label">Number of participants<span>*</span> :</label><br>
+            <input type="text" id="capacity" name="capacity" value="{{ service_form.capacity.value }}" hidden>
+            <input type="number" id="participants" name="participants">
+            <span id="capacityError" class="error-text"></span>
+        </div>
+        
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                $("#participants").on("input", function() {
+                    // Get the values of capacity and participants
+                    var capacity = parseInt($("#capacity").val());
+                    var participants = parseInt($("#participants").val());
+        
+                    // Check if the number of participants exceeds the capacity
+                    if (!isNaN(capacity) && !isNaN(participants) && participants > capacity) {
+                        $("#capacityError").text("Capacity exceeded.");
+                    } else {
+                        $("#capacityError").text("");
+                    }
+                });
+            });
+        </script>
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        
+
+      <div class="mb-3 services-container">
+          <label for="services_required" class="form-label">Services Required<span>*</span> :</label><br>
+          <!-- Your existing HTML for the select element -->
+<select id="services_required" name="services_required" multiple style="width:100%;">
+  {% for service in services_required %}
+      <option value="{{ service }}">{{ service }}</option>
+  {% endfor %}
+</select>
+
+<!-- Display selected services -->
+<!-- Display selected services -->
+<!-- Display selected services -->
+<div id="selectedServices" >
+  {% if service_form.services_required.value %}
+    Selected Services: 
+    {% for selected_service in service_form.services_required.value %}
+        {{ selected_service }}
+        {% if not forloop.last %}, {% endif %}
+    {% endfor %}
+  {% else %}
+    <!-- Display nothing if no services are selected initially -->
+  {% endif %}
+</div>
+
+<!-- Add this script for AJAX -->
+<script>
+$(document).ready(function() {
+    function updateSelectedServices() {
+        // Get the selected values from the select element
+        var selectedServices = $("#services_required").val();
+
+        // Update the selected services display
+        var displayText = selectedServices ? "Selected Services: " + selectedServices.join(", ") : "";
+        $("#selectedServices").text(displayText);
+    }
+
+    // Initialize the selected services display
+    updateSelectedServices();
+
+    // Listen for changes in the select element
+    $("#services_required").change(function() {
+        updateSelectedServices();
+    });
+});
+</script>
+
+        <span id="serviceError" style="color: red;"></span>
+      </div>
+  </td>
+  <!-- Add this script for AJAX -->
+  <!-- Add this script tag to include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+            </tr><tr><td>
+              <span>* Required fields</span><br>
+          
+            </td><td>
+              
+              <a class="btn2" onclick="goBack()" style="background-color: #F3B95F; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    margin-left: 79px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;">
+    <i class="fa fa-arrow-circle-left" aria-hidden="true"></i>
+    Go Back
+</a>
+<script>
+  function goBack() {
+      window.history.back();
+  }
+</script>
+<button id="sendButton" type="submit">Send Request
+        </button>
+            </td></tr></form>
+            <script>
+              function validateForm() {
+                  // Check conditions here
+                  var dateError = document.getElementById("dateError").innerText;
+                  var capacityError = document.getElementById("capacityError").innerText;
+                  var budgetError = document.getElementById("budgetError").innerText;
+          
+                  // If there are errors, prevent form submission
+                  if (dateError || capacityError || budgetError) {
+                      return false; // Prevent form submission
+                  }
+          
+                  // If no errors, allow form submission
+                  return true;
+              }
+          
+              // Add your existing checkAvailability() function if needed
+              function checkAvailability() {
+                  // Your existing logic for checking date availability
+              }
+          </script>
+        </div>
+      </div>
+    </div>
+  
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/services.js' %}"></script>
+  </body>
+  
+  </html>
